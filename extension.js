@@ -1,16 +1,20 @@
 const vscode = require("vscode");
+const axios = require("axios");
 
-/**
- * @param {vscode.ExtensionContext} context
- */
-function activate(context) {
-  console.log(
-    'Congratulations, your extension "some-demo-extension" is now active!'
+async function getBlogs() {
+  const res = await axios.default.get(
+    "https://blog.webdevsimplified.com/rss.xml"
   );
+  console.log(res.data);
+}
+
+async function activate(context) {
+  const blogs = await getBlogs();
+
   let disposable = vscode.commands.registerCommand(
-    "some-demo-extension.helloWorld",
+    "some-demo-extension.getBlogs",
     function () {
-      vscode.window.showInformationMessage("Hello World from Demo-Extension!");
+      vscode.window.showInformationMessage("Fetching the blogs!");
     }
   );
 
