@@ -6,17 +6,30 @@ async function getBlogs() {
   const res = await axios.default.get(
     "https://blog.webdevsimplified.com/rss.xml"
   );
-  const articles = xmlParser.parse(res.data).rss.channel.item;
-  console.log(articles);
+
+  return res;
 }
 
 async function activate(context) {
-  const blogs = await getBlogs();
+  const result = await getBlogs();
+  const articles = xmlParser
+    .parse(result.data)
+    .rss.channel.item.map((article) => ({
+      label: article.title,
+      detail: article.description,
+      link: article.link,
+    }));
 
   let disposable = vscode.commands.registerCommand(
     "some-demo-extension.getBlogs",
-    function () {
-      vscode.window.showInformationMessage("Fetching the blogs!");
+    async function () {
+      const article = await vscode.window.showQuickPick(articles, {
+        matchOnDetail: true,
+      }); // showing the articles in the quick pick and storing the clicked one in article
+      if (!article) {
+        return;
+      }
+      vscode.env.openExternal(article.link); //for opening an external link
     }
   );
 
