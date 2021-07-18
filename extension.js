@@ -29,6 +29,7 @@ async function activate(context) {
       if (!article) {
         return;
       }
+      // @ts-ignore
       vscode.env.openExternal(article.link); //for opening an external link
     }
   );
