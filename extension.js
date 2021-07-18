@@ -1,11 +1,13 @@
 const vscode = require("vscode");
 const axios = require("axios");
+const xmlParser = require("fast-xml-parser");
 
 async function getBlogs() {
   const res = await axios.default.get(
     "https://blog.webdevsimplified.com/rss.xml"
   );
-  console.log(res.data);
+  const articles = xmlParser.parse(res.data).rss.channel.item;
+  console.log(articles);
 }
 
 async function activate(context) {
